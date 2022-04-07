@@ -80,12 +80,12 @@
                     show-arrows
                   >
                     <v-slide-item
-                      v-for="item in largeData.list"
+                      v-for="item in largeData.hourly"
                       :key="item.id"
                     >
                       <div class="d-flex flex-column justify-center align-center testas px-2">
                         <span>
-                          {{ getTime(item.dt_txt) }}
+                          {{ getTime(item.dt) }}
                         </span>
                         <v-img
                           max-height="40"
@@ -102,6 +102,7 @@
                 <v-btn
                   elevation="2"
                   @click="overlay = true"
+                  class="rounded-pill"
                 >
                   Change Location
                 </v-btn>
@@ -109,16 +110,36 @@
             </div>
 
             <!-- 4 DAY FORECAST NOT YET AVAILABLE BUT WORKING ON IT-->
-            <!-- <v-sheet
-              color="warning"
-              height="150"
-              width="400"
-              class="d-flex flex-column justify-center align-start px-5"
-              rounded
-              elevation="2"
-            >
-              <h1>placeholder</h1>
-            </v-sheet> -->
+            
+            <div class="d-flex justify-center align-center mt-5">
+              <v-sheet
+                color="warning"
+                height="650"
+                width="400"
+                class="d-flex flex-column justify-center align-center px-5"
+                rounded
+                elevation="2"
+              >
+                <div v-for="day in largeData.daily" :key="day.id" class="weather-100p-width">
+                  <div class="d-flex justify-space-between align-center weather-100p-width">
+                    <span class="font-weight-bold" v-text="getDayName(day.dt)"></span>
+
+                    <div class="d-flex flex-column align-center">
+                      <v-img
+                      max-height="40"
+                      max-width="40"
+                      :src="`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`"
+                      />
+                      <span class="blue--text text--darken-3" v-text="getPercent(day.pop)"/>
+                    </div>
+                    
+                    <span>{{day.temp.night}} &#8451; </span>
+                    <span> {{day.temp.day}} &#8451;</span>
+                  </div>
+                  <v-divider></v-divider>
+                </div>
+              </v-sheet>
+            </div>
           </div>
 
         </transition>
@@ -173,6 +194,19 @@
     },
 
     methods: {
+      getDayName(time) {
+        if (this.largeData) {
+          const today = new Date()
+          const fetchedDate = new Date(time * 1000)
+          var isToday = (today.toDateString() === fetchedDate.toDateString())
+          const dayName = fetchedDate.toLocaleString('en-us', { weekday: 'short' })
+          if (isToday) {
+            return 'Today'
+          } else {
+            return dayName
+          }
+        }
+      },
       getTimeOfDay() {
         const iconName = this.fetchedData.weather[0].icon
         if (iconName.includes('d')) {
@@ -189,9 +223,9 @@
       },
       getTime(time) {
         if (this.largeData) {
-          const timeArray = time.split(" ")
-          const timeLast = timeArray[1]
-          return timeLast.slice(0, 2)
+          const date = new Date(time * 1000)
+          const hours = date.getHours()
+          return hours
         }
       },
       turnOffOverlay() {
@@ -219,7 +253,7 @@
         })
       },
       getMore(coordinatesObject) {
-        this.$axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinatesObject.lat}&lon=${coordinatesObject.lon}&appid=${this.apiKey}&units=metric`)
+        this.$axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${coordinatesObject.lat}&lon=${coordinatesObject.lon}&exclude=current,minutely,alerts&appid=${this.apiKey}&units=metric`)
         .then(res => {
           this.largeData = res.data
           this.isLargeDataFetched = true
@@ -255,6 +289,11 @@
   width: 100%;
   height: auto;
   margin-bottom: 15px;
+}
+
+.weather-100p-width {
+  width: 100%;
+  height: auto;
 }
 
 </style>
