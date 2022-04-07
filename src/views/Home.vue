@@ -1,18 +1,23 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <weather-cards />
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+  import WeatherCards from '../components/WeatherCards'
 
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
+  export default {
+    name: 'Home',
+
+    components: {
+      WeatherCards,
+    },
+
+    data () {
+      return {
+        apiKey: process.env.VUE_APP_API_KEY
+      }
+    },
+
+
   }
-}
 </script>
