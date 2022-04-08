@@ -11,10 +11,10 @@
           v-if="!showData"
         >
           <v-text-field
-            label="Prepend inner"
+            label="Enter location such as city"
             prepend-inner-icon="mdi-magnify"
             solo
-            class="ma-0 pa-0 lel"
+            class="ma-0 pa-0"
             height="30"
             hide-details
             v-model="searchLocation"
@@ -29,22 +29,30 @@
             <div class="d-flex justify-center align-center">
               <v-sheet
                 color="warning"
-                height="150"
+                height="400"
                 width="400"
-                class="d-flex flex-column justify-center align-start px-5 mr-4"
+                class="d-flex flex-column justify-space-around align-start px-5 mr-4 rounded-lg"
                 rounded
                 elevation="2"
               >
-                <h1>{{fetchedData.name}}</h1>
-                {{fetchedData.main.temp}} &#8451;
-
-                <div class="d-flex ustify-center align-center">
-                  {{fetchedData.weather[0].description}}
+                <div class="d-flex flex-column justify-center align-start">
+                  <h1 v-text="getDayName(fetchedData.dt)" class="font-weight-bold"></h1>
+                  <span v-text="getDate(fetchedData.dt)"></span>
+                  <div class="d-flex justify-center align-center mt-2">
+                    <v-icon dense>
+                      mdi-map-marker
+                    </v-icon>
+                    <span>{{fetchedData.name}}, {{fetchedData.sys.country}}</span>
+                  </div>
+                </div>
+                <div class="d-flex flex-column justify-center align-start">
                   <v-img
-                    max-height="40"
-                    max-width="40"
+                    max-height="100"
+                    max-width="100"
                     :src="`https://openweathermap.org/img/wn/${fetchedData.weather[0].icon}@2x.png`"
                   ></v-img>
+                  <span class="text-h2 font-weight-bold">{{fetchedData.main.temp}}&#8451;</span>
+                  <h3 class="font-weight-bold text-capitalize">{{fetchedData.weather[0].description}}</h3>
                 </div>
               </v-sheet>
 
@@ -54,20 +62,20 @@
                 width="400"
                 rounded
                 elevation="2"
-                class="d-flex flex-column justify-space-between align-center py-5 px-5"
+                class="d-flex flex-column justify-space-between align-center py-5 px-5 rounded-lg"
               >
-                <div class="test d-flex justify-space-between align-center">
-                  <span class="font-weight-bold">HUMIDITY</span>
+                <div class="weather-100p-width-15px-mb d-flex justify-space-between align-center">
+                  <span class="font-weight-bold">Humidity</span>
                   <span>{{fetchedData.main.humidity}} %</span>
                 </div>
 
-                <div class="test d-flex justify-space-between align-center">
-                  <span class="font-weight-bold">FEELS LIKE</span>
+                <div class="weather-100p-width-15px-mb d-flex justify-space-between align-center">
+                  <span class="font-weight-bold">Feels Like</span>
                   <span>{{fetchedData.main.feels_like}} &#8451;</span>
                 </div>
 
-                <div class="test d-flex justify-space-between align-center">
-                  <span class="font-weight-bold">WIND</span>
+                <div class="weather-100p-width-15px-mb d-flex justify-space-between align-center">
+                  <span class="font-weight-bold">Wind</span>
                   <span>{{fetchedData.wind.speed}} m/s</span>
                 </div>
 
@@ -83,7 +91,7 @@
                       v-for="item in largeData.hourly"
                       :key="item.id"
                     >
-                      <div class="d-flex flex-column justify-center align-center testas px-2">
+                      <div class="d-flex flex-column justify-center align-center weather-100p-width px-2">
                         <span>
                           {{ getTime(item.dt) }}
                         </span>
@@ -109,20 +117,17 @@
               </v-sheet>
             </div>
 
-            <!-- 4 DAY FORECAST NOT YET AVAILABLE BUT WORKING ON IT-->
-            
             <div class="d-flex justify-center align-center mt-5">
               <v-sheet
                 color="warning"
                 height="650"
                 width="400"
-                class="d-flex flex-column justify-center align-center px-5"
-                rounded
+                class="d-flex flex-column justify-center align-center px-5 rounded-lg"
                 elevation="2"
               >
                 <div v-for="day in largeData.daily" :key="day.id" class="weather-100p-width">
                   <div class="d-flex justify-space-between align-center weather-100p-width">
-                    <span class="font-weight-bold" v-text="getDayName(day.dt)"></span>
+                    <span class="font-weight-bold" v-text="getTodayOrDayName(day.dt)"></span>
 
                     <div class="d-flex flex-column align-center">
                       <v-img
@@ -159,7 +164,7 @@
               label="Prepend inner"
               prepend-inner-icon="mdi-magnify"
               solo
-              class="ma-0 pa-0 lel"
+              class="ma-0 pa-0"
               height="30"
               hide-details
               v-model="searchLocation"
@@ -194,7 +199,18 @@
     },
 
     methods: {
+      getDate(time) {
+        const fetchedDate = new Date(time * 1000).toLocaleDateString('en-us', { month: "short", day: "numeric", year: "numeric" })
+        return fetchedDate
+      },
       getDayName(time) {
+        if (this.largeData) {
+          const fetchedDate = new Date(time * 1000)
+          const dayName = fetchedDate.toLocaleString('en-us', { weekday: 'long' })
+          return dayName
+        }
+      },
+      getTodayOrDayName(time) {
         if (this.largeData) {
           const today = new Date()
           const fetchedDate = new Date(time * 1000)
@@ -285,7 +301,7 @@
   opacity: 0;
 }
 
-.test {
+.weather-100p-width-15px-mb {
   width: 100%;
   height: auto;
   margin-bottom: 15px;
