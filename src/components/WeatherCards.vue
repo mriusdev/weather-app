@@ -92,16 +92,17 @@
                       :key="item.id"
                     >
                       <div class="d-flex flex-column justify-center align-center weather-100p-width px-2">
-                        <span>
+                        <span class="font-weight-bold" style="font-size: 13px;">
                           {{ getTime(item.dt) }}
                         </span>
                         <v-img
-                          max-height="40"
-                          max-width="40"
+                          max-height="35"
+                          max-width="35"
                           :src="`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`"
                         ></v-img>
-                        <span class="blue--text text--lighten-2" v-text="getPercent(item.pop)">
+                        <span style="font-size: 12px;" class="blue--text text--darken-3 font-weight-bold" v-text="getPercent(item.pop)">
                         </span>
+                        <span style="font-size: 15px;" class="mt-1 font-weight-bold">{{item.temp}}&#176;</span>
                       </div>
                     </v-slide-item>
                   </v-slide-group>
@@ -120,28 +121,37 @@
             <div class="d-flex justify-center align-center mt-5">
               <v-sheet
                 color="warning"
-                height="650"
+                height="auto"
                 width="400"
-                class="d-flex flex-column justify-center align-center px-5 rounded-lg"
+                class="d-flex flex-column px-5 py-5 rounded-lg"
                 elevation="2"
               >
-                <div v-for="day in largeData.daily" :key="day.id" class="weather-100p-width">
-                  <div class="d-flex justify-space-between align-center weather-100p-width">
-                    <span class="font-weight-bold" v-text="getTodayOrDayName(day.dt)"></span>
-
-                    <div class="d-flex flex-column align-center">
-                      <v-img
-                      max-height="40"
-                      max-width="40"
-                      :src="`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`"
-                      />
-                      <span class="blue--text text--darken-3" v-text="getPercent(day.pop)"/>
-                    </div>
-                    
-                    <span>{{day.temp.night}} &#8451; </span>
-                    <span> {{day.temp.day}} &#8451;</span>
+                <div style="height: auto; width: 100%;">
+                  <div class="d-flex py-1" style="border-bottom: 1px solid black;">
+                    <v-icon
+                      size="15"
+                    >
+                      mdi-calendar-range
+                    </v-icon>
+                    <span class="ml-1" style="font-size: 15px;">7-DAY FORECAST</span>
                   </div>
-                  <v-divider></v-divider>
+                  <div v-for="day in largeData.daily" :key="day.id" class="weather-100p-width weather-bottom-outline">
+                    <div style="height: 60px;" class="d-flex justify-space-between align-center">
+                      <span style="width: 35px;" class="font-weight-bold" v-text="getTodayOrDayName(day.dt)"></span>
+
+                      <div class="d-flex flex-column align-center">
+                        <v-img
+                        max-height="40"
+                        max-width="40"
+                        :src="`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`"
+                        />
+                        <span style="font-size: 12px;" class="blue--text text--darken-3 font-weight-bold" v-text="getPercent(day.pop)"/>
+                      </div>
+                      
+                      <span style="width: 65px;">{{day.temp.night}} &#8451; </span>
+                      <span style="width: 65px;">{{day.temp.day}} &#8451;</span>
+                    </div>
+                  </div>
                 </div>
               </v-sheet>
             </div>
@@ -311,5 +321,11 @@
   width: 100%;
   height: auto;
 }
+
+.weather-bottom-outline:not(:last-child) {
+  border-bottom: 1px solid black
+}
+
+
 
 </style>
