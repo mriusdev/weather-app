@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col cols="12" align="center">
         <v-sheet
-          color="warning"
+          color="transparent"
           height="100"
           width="400"
           class="d-flex justify-center align-center"
@@ -18,9 +18,9 @@
             height="30"
             hide-details
             v-model="searchLocation"
-            @keydown.enter.prevent="submit"
+            @keydown.enter.prevent="performOperations"
             :style="{backgroundColor:'red'}"
-            background-color="rgb(95, 6, 6)"
+            background-color="deep-purple lighten-2"
             dark
           ></v-text-field>
         </v-sheet>
@@ -31,9 +31,10 @@
                 color="white"
                 height="400"
                 width="400"
-                class="d-flex flex-column justify-space-around align-start px-7 mr-4 rounded-lg"
+                class="d-flex flex-column justify-space-between align-start px-7 py-5 mr-4 rounded-lg"
                 rounded
                 elevation="5"
+                style="box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;"
               >
                 <div class="d-flex flex-column justify-center align-start">
                   <h1 v-text="getDayName(fetchedData.dt)" class="font-weight-bold blue-grey--text text--darken-3"></h1>
@@ -102,12 +103,12 @@
                   </v-icon>
                   <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
                     <span class="font-weight-bold blue-grey--text text--darken-3">Wind</span>
-                    <span class="blue-grey--text text--darken-3">{{fetchedData.main.speed}} m/s</span>
+                    <span class="blue-grey--text text--darken-3">{{fetchedData.wind.speed}} m/s</span>
                   </v-sheet>
                 </div>
 
                 <v-sheet
-                  class="px-auto"
+                  class="mt-3"
                   max-width="370"
                 >
                   <v-slide-group
@@ -118,7 +119,7 @@
                       v-for="item in largeData.hourly"
                       :key="item.id"
                     >
-                      <div class="d-flex flex-column justify-center align-center weather-100p-width px-4">
+                      <div class="d-flex flex-column justify-space-between align-center weather-100p-width px-4">
                         <span class="font-weight-bold blue-grey--text text--darken-3" style="font-size: 13px;">
                           {{ getTime(item.dt) }}
                         </span>
@@ -213,7 +214,7 @@
           :value="overlay"
         >
           <v-sheet
-            color="warning"
+            color="transparent"
             height="900"
             width="400"
             class="d-flex justify-center align-start"
@@ -221,16 +222,16 @@
             v-click-outside="turnOffOverlay"
           >
             <v-text-field
-              label="Prepend inner"
+              label="Enter location such as city"
               prepend-inner-icon="mdi-magnify"
               solo
               class="ma-0 pa-0"
               height="30"
               hide-details
               v-model="searchLocation"
-              @keydown.enter.prevent="submit"
+              @keydown.enter.prevent="performOperations"
               :style="{backgroundColor:'red'}"
-              background-color="rgb(95, 6, 6)"
+              background-color="deep-purple lighten-2"
               dark
             ></v-text-field>
           </v-sheet>
@@ -307,37 +308,38 @@
       turnOffOverlay() {
         this.overlay = false
       },
-      submit() {
-        this.isLargeDataFetched = false
-        this.$axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.searchLocation}&appid=${this.apiKey}&units=metric`)
-        .then(res => {
-          if (this.overlay) {
-            this.overlay = false
-            this.loading = true
-          }
-          this.showData = true
-          this.searchLocation = ''
-          this.fetchedData = res.data
-          this.getTimeOfDay()
-          const locationData = this.fetchedData.coord
-          this.getMore(locationData)
-          console.log(res.data)
-          this.loading = false
-        })
-        .catch(error => {
-          console.log(error)
+      getCurrentForecast() {
+        return new Promise((resolve) => {
+          this.$axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.searchLocation}&appid=${this.apiKey}&units=metric`)
+          .then(res => {
+            this.fetchedData = res.data
+            // If search was done within modal
+            // then turn off modal after search
+            if (this.overlay) {
+              this.overlay = false
+              this.loading = true
+            }
+            resolve()
+          })
         })
       },
-      getMore(coordinatesObject) {
-        this.$axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${coordinatesObject.lat}&lon=${coordinatesObject.lon}&exclude=current,minutely,alerts&appid=${this.apiKey}&units=metric`)
-        .then(res => {
-          this.largeData = res.data
-          this.isLargeDataFetched = true
-          console.log(res.data)
+      get7DayForecastDetailed() {
+        return new Promise((resolve) => {
+          this.$axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.fetchedData.coord.lat}&lon=${this.fetchedData.coord.lon}&exclude=current,minutely,alerts&appid=${this.apiKey}&units=metric`)
+          .then(res => {
+            this.largeData = res.data
+            this.isLargeDataFetched = true
+            resolve()
+          })
         })
-        .catch(error => {
-          console.log(error)
-        })
+      },
+      async performOperations() {
+        this.isLargeDataFetched = false
+        await this.getCurrentForecast()
+        await this.get7DayForecastDetailed()
+        this.showData = true
+        this.loading = false
+        this.getTimeOfDay()
       }
     },
     
