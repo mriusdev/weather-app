@@ -28,21 +28,21 @@
           <div class="d-flex flex-column justify-center align-center" v-if="showData">
             <div class="d-flex justify-center align-center">
               <v-sheet
-                color="warning"
+                color="white"
                 height="400"
                 width="400"
-                class="d-flex flex-column justify-space-around align-start px-5 mr-4 rounded-lg"
+                class="d-flex flex-column justify-space-around align-start px-7 mr-4 rounded-lg"
                 rounded
-                elevation="2"
+                elevation="5"
               >
                 <div class="d-flex flex-column justify-center align-start">
-                  <h1 v-text="getDayName(fetchedData.dt)" class="font-weight-bold"></h1>
-                  <span v-text="getDate(fetchedData.dt)"></span>
+                  <h1 v-text="getDayName(fetchedData.dt)" class="font-weight-bold blue-grey--text text--darken-3"></h1>
+                  <span v-text="getDate(fetchedData.dt)" class="blue-grey--text text--darken-3"></span>
                   <div class="d-flex justify-center align-center mt-2">
-                    <v-icon dense>
+                    <v-icon dense class="blue-grey--text text--darken-3">
                       mdi-map-marker
                     </v-icon>
-                    <span>{{fetchedData.name}}, {{fetchedData.sys.country}}</span>
+                    <span class="blue-grey--text text--darken-3">{{fetchedData.name}}, {{fetchedData.sys.country}}</span>
                   </div>
                 </div>
                 <div class="d-flex flex-column justify-center align-start">
@@ -51,32 +51,59 @@
                     max-width="100"
                     :src="`https://openweathermap.org/img/wn/${fetchedData.weather[0].icon}@2x.png`"
                   ></v-img>
-                  <span class="text-h2 font-weight-bold">{{fetchedData.main.temp}}&#8451;</span>
-                  <h3 class="font-weight-bold text-capitalize">{{fetchedData.weather[0].description}}</h3>
+                  <span class="text-h2 font-weight-bold blue-grey--text text--darken-3">{{fetchedData.main.temp}}&#8451;</span>
+                  <h3 class="font-weight-bold text-capitalize blue-grey--text text--darken-3">{{fetchedData.weather[0].description}}</h3>
                 </div>
               </v-sheet>
 
               <v-sheet
-                color="warning"
-                height="300"
+                color="white"
+                height="310"
                 width="400"
                 rounded
-                elevation="2"
-                class="d-flex flex-column justify-space-between align-center py-5 px-5 rounded-lg"
+                elevation="5"
+                class="d-flex flex-column justify-space-between align-center py-5 px-7 rounded-lg"
               >
-                <div class="weather-100p-width-15px-mb d-flex justify-space-between align-center">
-                  <span class="font-weight-bold">Humidity</span>
-                  <span>{{fetchedData.main.humidity}} %</span>
+                <div style="width: 100%" class="d-flex justify-space-between align-center">
+                  <v-icon
+                    dense
+                    size="15"
+                    class="blue-grey--text text--darken-3"
+                  >
+                    mdi-waves
+                  </v-icon>
+                  <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
+                    <span class="font-weight-bold blue-grey--text text--darken-3">Humidity</span>
+                    <span class="blue-grey--text text--darken-3">{{fetchedData.main.humidity}} %</span>
+                  </v-sheet>
+                </div>
+                
+                <div style="width: 100%" class="d-flex justify-space-between align-center">
+                  <v-icon
+                    dense
+                    size="15"
+                    class="blue-grey--text text--darken-3"
+                  >
+                    mdi-thermometer
+                  </v-icon>
+                  <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
+                    <span class="font-weight-bold blue-grey--text text--darken-3">Feels Like</span>
+                    <span class="blue-grey--text text--darken-3">{{fetchedData.main.feels_like}} &#8451;</span>
+                  </v-sheet>
                 </div>
 
-                <div class="weather-100p-width-15px-mb d-flex justify-space-between align-center">
-                  <span class="font-weight-bold">Feels Like</span>
-                  <span>{{fetchedData.main.feels_like}} &#8451;</span>
-                </div>
-
-                <div class="weather-100p-width-15px-mb d-flex justify-space-between align-center">
-                  <span class="font-weight-bold">Wind</span>
-                  <span>{{fetchedData.wind.speed}} m/s</span>
+                <div style="width: 100%" class="d-flex justify-space-between align-center">
+                  <v-icon
+                    dense
+                    size="15"
+                    class="blue-grey--text text--darken-3"
+                  >
+                    mdi-weather-windy
+                  </v-icon>
+                  <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
+                    <span class="font-weight-bold blue-grey--text text--darken-3">Wind</span>
+                    <span class="blue-grey--text text--darken-3">{{fetchedData.main.speed}} m/s</span>
+                  </v-sheet>
                 </div>
 
                 <v-sheet
@@ -91,8 +118,8 @@
                       v-for="item in largeData.hourly"
                       :key="item.id"
                     >
-                      <div class="d-flex flex-column justify-center align-center weather-100p-width px-2">
-                        <span class="font-weight-bold" style="font-size: 13px;">
+                      <div class="d-flex flex-column justify-center align-center weather-100p-width px-4">
+                        <span class="font-weight-bold blue-grey--text text--darken-3" style="font-size: 13px;">
                           {{ getTime(item.dt) }}
                         </span>
                         <v-img
@@ -102,16 +129,18 @@
                         ></v-img>
                         <span style="font-size: 12px;" class="blue--text text--darken-3 font-weight-bold" v-text="getPercent(item.pop)">
                         </span>
-                        <span style="font-size: 15px;" class="mt-1 font-weight-bold">{{item.temp}}&#176;</span>
+                        <span style="font-size: 15px;" class="mt-1 font-weight-bold blue-grey--text text--darken-3">{{item.temp}}&#176;</span>
                       </div>
                     </v-slide-item>
                   </v-slide-group>
                 </v-sheet>
 
                 <v-btn
-                  elevation="2"
                   @click="overlay = true"
-                  class="rounded-pill"
+                  class="rounded-xl mt-4"
+                  style="width: 100%"
+                  color="deep-purple darken-2"
+                  outlined
                 >
                   Change Location
                 </v-btn>
@@ -120,24 +149,26 @@
 
             <div class="d-flex justify-center align-center mt-5">
               <v-sheet
-                color="warning"
+                color="white"
                 height="auto"
                 width="400"
-                class="d-flex flex-column px-5 py-5 rounded-lg"
-                elevation="2"
+                class="d-flex flex-column px-5 py-5 rounded-lg px-7"
+                elevation="5"
+
               >
                 <div style="height: auto; width: 100%;">
-                  <div class="d-flex py-1" style="border-bottom: 1px solid black;">
+                  <div class="d-flex py-1" style="border-bottom: 1px solid #B39DDB;">
                     <v-icon
                       size="15"
+                      class="deep-purple--text text--lighten-2"
                     >
                       mdi-calendar-range
                     </v-icon>
-                    <span class="ml-1" style="font-size: 15px;">7-DAY FORECAST</span>
+                    <span class="ml-1 deep-purple--text text--lighten-2" style="font-size: 15px;">7-DAY FORECAST</span>
                   </div>
                   <div v-for="day in largeData.daily" :key="day.id" class="weather-100p-width weather-bottom-outline">
                     <div style="height: 60px;" class="d-flex justify-space-between align-center">
-                      <span style="width: 35px;" class="font-weight-bold" v-text="getTodayOrDayName(day.dt)"></span>
+                      <span style="width: 35px;" class="font-weight-bold blue-grey--text text--darken-3" v-text="getTodayOrDayName(day.dt)"></span>
 
                       <div class="d-flex flex-column align-center">
                         <v-img
@@ -148,8 +179,27 @@
                         <span style="font-size: 12px;" class="blue--text text--darken-3 font-weight-bold" v-text="getPercent(day.pop)"/>
                       </div>
                       
-                      <span style="width: 65px;">{{day.temp.night}} &#8451; </span>
-                      <span style="width: 65px;">{{day.temp.day}} &#8451;</span>
+                      <div class="d-flex">
+                        <v-icon
+                          class="blue-grey--text text--darken-3"
+                          size="16"
+                          dense
+                        >
+                          mdi-weather-night
+                        </v-icon>
+                        <span class="blue-grey--text text--darken-3" style="width: 65px;">{{day.temp.night}} &#8451; </span>
+                      </div>
+
+                      <div class="d-flex">
+                        <v-icon
+                          class="blue-grey--text text--darken-3"
+                          size="16"
+                          dense
+                        >
+                          mdi-white-balance-sunny
+                        </v-icon>
+                        <span class="blue-grey--text text--darken-3" style="width: 65px;">{{day.temp.day}} &#8451; </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -323,7 +373,7 @@
 }
 
 .weather-bottom-outline:not(:last-child) {
-  border-bottom: 1px solid black
+  border-bottom: 1px solid #B39DDB;
 }
 
 
