@@ -6,7 +6,7 @@
           color="transparent"
           height="100"
           width="400"
-          class="d-flex justify-center align-center"
+          class="d-flex flex-column justify-center align-center"
           rounded
           v-if="!showData"
         >
@@ -19,19 +19,27 @@
             hide-details
             v-model="searchLocation"
             @keydown.enter.prevent="performOperations"
-            :style="{backgroundColor:'red'}"
             background-color="deep-purple lighten-2"
             dark
+            style="width: 100%;"
           ></v-text-field>
+          <transition name="slide-fade">
+            <v-sheet v-if="this.error !== ''" color="red lighten-4" class="rounded-xl px-2 py-2 d-flex justify-center align-center" style="width: 100%;">
+              <span class="subtitle-2 red--text text--darken-3" >{{this.error}}</span>
+            </v-sheet>
+          </transition>
         </v-sheet>
         <transition name="slide-fade">
-          <div class="d-flex flex-column justify-center align-center" v-if="showData">
-            <div class="d-flex justify-center align-center">
+          <div 
+            :class="[$vuetify.breakpoint.lgAndUp ? ['d-flex', 'justify-center', 'align-center', 'weather-cards-column-gap'] : $vuetify.breakpoint.mdOnly ? ['d-flex', 'justify-center', 'align-center', 'flex-wrap', 'weather-cards-column-gap', 'weather-cards-row-gap']: $vuetify.breakpoint.smAndDown ? ['weather-cards-row-gap', 'd-flex', 'flex-column', 'justify-center', 'align-center'] : '']" 
+            v-if="showData"
+          >
+            <div class="order-lg-1 d-flex justify-center align-center">
               <v-sheet
                 color="white"
                 height="400"
                 width="400"
-                class="d-flex flex-column justify-space-between align-start px-7 py-5 mr-4 rounded-lg"
+                class="d-flex flex-column justify-space-between align-start px-7 py-5 rounded-lg"
                 rounded
                 elevation="5"
                 style="box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;"
@@ -56,59 +64,61 @@
                   <h3 class="font-weight-bold text-capitalize blue-grey--text text--darken-3">{{fetchedData.weather[0].description}}</h3>
                 </div>
               </v-sheet>
+            </div>
 
               <v-sheet
                 color="white"
-                height="310"
+                height="400"
                 width="400"
                 rounded
                 elevation="5"
-                class="d-flex flex-column justify-space-between align-center py-5 px-7 rounded-lg"
+                class="order-lg-3 d-flex flex-column justify-space-between align-center py-5 px-7 rounded-lg"
               >
-                <div style="width: 100%" class="d-flex justify-space-between align-center">
-                  <v-icon
-                    dense
-                    size="15"
-                    class="blue-grey--text text--darken-3"
-                  >
-                    mdi-waves
-                  </v-icon>
-                  <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
-                    <span class="font-weight-bold blue-grey--text text--darken-3">Humidity</span>
-                    <span class="blue-grey--text text--darken-3">{{fetchedData.main.humidity}} %</span>
-                  </v-sheet>
-                </div>
-                
-                <div style="width: 100%" class="d-flex justify-space-between align-center">
-                  <v-icon
-                    dense
-                    size="15"
-                    class="blue-grey--text text--darken-3"
-                  >
-                    mdi-thermometer
-                  </v-icon>
-                  <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
-                    <span class="font-weight-bold blue-grey--text text--darken-3">Feels Like</span>
-                    <span class="blue-grey--text text--darken-3">{{fetchedData.main.feels_like}} &#8451;</span>
-                  </v-sheet>
-                </div>
+                <div style="width: 100%; row-gap: 7px;" class="d-flex flex-column">
+                  <div style="width: 100%" class="d-flex justify-space-between align-center">
+                    <v-icon
+                      dense
+                      size="15"
+                      class="blue-grey--text text--darken-3"
+                    >
+                      mdi-waves
+                    </v-icon>
+                    <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
+                      <span class="font-weight-bold blue-grey--text text--darken-3">Humidity</span>
+                      <span class="blue-grey--text text--darken-3">{{fetchedData.main.humidity}} %</span>
+                    </v-sheet>
+                  </div>
+                  
+                  <div style="width: 100%" class="d-flex justify-space-between align-center">
+                    <v-icon
+                      dense
+                      size="15"
+                      class="blue-grey--text text--darken-3"
+                    >
+                      mdi-thermometer
+                    </v-icon>
+                    <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
+                      <span class="font-weight-bold blue-grey--text text--darken-3">Feels Like</span>
+                      <span class="blue-grey--text text--darken-3">{{fetchedData.main.feels_like}} &#8451;</span>
+                    </v-sheet>
+                  </div>
 
-                <div style="width: 100%" class="d-flex justify-space-between align-center">
-                  <v-icon
-                    dense
-                    size="15"
-                    class="blue-grey--text text--darken-3"
-                  >
-                    mdi-weather-windy
-                  </v-icon>
-                  <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
-                    <span class="font-weight-bold blue-grey--text text--darken-3">Wind</span>
-                    <span class="blue-grey--text text--darken-3">{{fetchedData.wind.speed}} m/s</span>
-                  </v-sheet>
+                  <div style="width: 100%" class="d-flex justify-space-between align-center">
+                    <v-icon
+                      dense
+                      size="15"
+                      class="blue-grey--text text--darken-3"
+                    >
+                      mdi-weather-windy
+                    </v-icon>
+                    <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
+                      <span class="font-weight-bold blue-grey--text text--darken-3">Wind</span>
+                      <span class="blue-grey--text text--darken-3">{{fetchedData.wind.speed}} m/s</span>
+                    </v-sheet>
+                  </div>
                 </div>
 
                 <v-sheet
-                  class="mt-3"
                   max-width="370"
                 >
                   <v-slide-group
@@ -138,7 +148,7 @@
 
                 <v-btn
                   @click="overlay = true"
-                  class="rounded-xl mt-4"
+                  class="rounded-xl mb-3"
                   style="width: 100%"
                   color="deep-purple darken-2"
                   outlined
@@ -146,9 +156,9 @@
                   Change Location
                 </v-btn>
               </v-sheet>
-            </div>
+            <!-- </div> -->
 
-            <div class="d-flex justify-center align-center mt-5">
+            <div class="d-flex justify-center align-center order-lg-2">
               <v-sheet
                 color="white"
                 height="auto"
@@ -212,28 +222,37 @@
 
         <v-overlay
           :value="overlay"
+          opacity="0.8"
         >
           <v-sheet
             color="transparent"
             height="900"
-            width="400"
             class="d-flex justify-center align-start"
             rounded
-            v-click-outside="turnOffOverlay"
+            :style="$vuetify.breakpoint.smAndDown ? 'width: 400px;' : 'width: 450px;'"
           >
-            <v-text-field
-              label="Enter location such as city"
-              prepend-inner-icon="mdi-magnify"
-              solo
-              class="ma-0 pa-0"
-              height="30"
-              hide-details
-              v-model="searchLocation"
-              @keydown.enter.prevent="performOperations"
-              :style="{backgroundColor:'red'}"
-              background-color="deep-purple lighten-2"
-              dark
-            ></v-text-field>
+            <div style="width: 100%;" class="d-flex flex-column justify-center align-start">
+              <h1>Change location</h1>
+              <v-text-field
+                label="Enter location such as city"
+                prepend-inner-icon="mdi-magnify"
+                solo
+                class="ma-0 pa-0"
+                height="30"
+                hide-details
+                v-model="searchLocation"
+                @keydown.enter.prevent="performOperations"
+                background-color="deep-purple lighten-2"
+                dark
+                v-click-outside="turnOffOverlay"
+                style="width: 100%;"
+              ></v-text-field>
+              <transition name="slide-fade">
+                <v-sheet v-if="this.error !== ''" color="red lighten-4" class="rounded-xl mt-7 px-2 py-2 d-flex justify-center align-center" style="width: 100%;">
+                  <span class="subtitle-2 red--text text--darken-3" >{{this.error}}</span>
+                </v-sheet>
+              </transition>
+            </div>
           </v-sheet>
         </v-overlay>
       </v-col>
@@ -252,6 +271,7 @@
         fetchedData: {},
         largeData: {},
         isLargeDataFetched: false,
+        error: '',
         showData: false,
         overlay: false,
         loading: false,
@@ -307,12 +327,14 @@
       },
       turnOffOverlay() {
         this.overlay = false
+        this.searchLocation = ''
       },
       getCurrentForecast() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           this.$axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.searchLocation}&appid=${this.apiKey}&units=metric`)
           .then(res => {
             this.fetchedData = res.data
+            this.searchLocation = ''
             // If search was done within modal
             // then turn off modal after search
             if (this.overlay) {
@@ -320,6 +342,10 @@
               this.loading = true
             }
             resolve()
+          })
+          .catch(error => {
+            this.error = error
+            reject()
           })
         })
       },
@@ -335,14 +361,15 @@
       },
       async performOperations() {
         this.isLargeDataFetched = false
-        await this.getCurrentForecast()
+        await this.getCurrentForecast().then(() => {
+          this.error !== '' ? this.error = '' : ''
+        })
         await this.get7DayForecastDetailed()
         this.showData = true
         this.loading = false
         this.getTimeOfDay()
       }
     },
-    
   }
 </script>
 
@@ -363,10 +390,8 @@
   opacity: 0;
 }
 
-.weather-100p-width-15px-mb {
-  width: 100%;
-  height: auto;
-  margin-bottom: 15px;
+.slide-fade-move {
+  transition: all .5s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 .weather-100p-width {
@@ -378,6 +403,12 @@
   border-bottom: 1px solid #B39DDB;
 }
 
+.weather-cards-column-gap {
+  column-gap: 20px;
+}
 
+.weather-cards-row-gap {
+  row-gap: 20px;
+}
 
 </style>
