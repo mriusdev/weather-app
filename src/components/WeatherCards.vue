@@ -4,17 +4,21 @@
       <v-col cols="12" align="center">
         <v-sheet
           color="transparent"
-          height="100"
-          width="400"
-          class="d-flex flex-column justify-center align-center"
+          height="auto"
+          width="450"
+          class="d-flex flex-column justify-center align-center mt-5"
           rounded
           v-if="!showData"
         >
+        <div class="d-flex flex-column justify-center align-center" style="width: 100%;">
+          <div class="d-flex mb-3">
+            <span class="font-weight-bold text-h4 blue-grey--text text--darken-3">Weather App</span>
+            <span class="text-caption blue-grey--text text--darken-3">Developed with Vue.js</span>
+          </div>
           <v-text-field
             label="Enter location such as city"
             prepend-inner-icon="mdi-magnify"
             solo
-            class="ma-0 pa-0"
             height="30"
             hide-details
             v-model="searchLocation"
@@ -24,10 +28,9 @@
             style="width: 100%;"
           ></v-text-field>
           <transition name="slide-fade">
-            <v-sheet v-if="this.error !== ''" color="red lighten-4" class="rounded-xl px-2 py-2 d-flex justify-center align-center" style="width: 100%;">
-              <span class="subtitle-2 red--text text--darken-3" >{{this.error}}</span>
-            </v-sheet>
+            <error-message class="mt-5" :error="error" />
           </transition>
+        </div>
         </v-sheet>
         <transition name="slide-fade">
           <div 
@@ -156,7 +159,6 @@
                   Change Location
                 </v-btn>
               </v-sheet>
-            <!-- </div> -->
 
             <div class="d-flex justify-center align-center order-lg-2">
               <v-sheet
@@ -226,10 +228,10 @@
         >
           <v-sheet
             color="transparent"
-            height="900"
             class="d-flex justify-center align-start"
             rounded
             :style="$vuetify.breakpoint.smAndDown ? 'width: 400px;' : 'width: 450px;'"
+            style="height: 70vh;"
           >
             <div style="width: 100%;" class="d-flex flex-column justify-center align-start">
               <h1>Change location</h1>
@@ -248,9 +250,8 @@
                 style="width: 100%;"
               ></v-text-field>
               <transition name="slide-fade">
-                <v-sheet v-if="this.error !== ''" color="red lighten-4" class="rounded-xl mt-7 px-2 py-2 d-flex justify-center align-center" style="width: 100%;">
-                  <span class="subtitle-2 red--text text--darken-3" >{{this.error}}</span>
-                </v-sheet>
+                <error-message class="mt-7" :error="error">
+                </error-message>
               </transition>
             </div>
           </v-sheet>
@@ -261,9 +262,12 @@
 </template>
 
 <script>
+  import ErrorMessage from '@/components/ErrorMessage.vue'
   export default {
     name: 'WeatherCards',
-
+    components: {
+      ErrorMessage
+    },
     data () {
       return {
         searchLocation: '',
@@ -328,6 +332,7 @@
       turnOffOverlay() {
         this.overlay = false
         this.searchLocation = ''
+        this.error = ''
       },
       getCurrentForecast() {
         return new Promise((resolve, reject) => {
@@ -344,30 +349,38 @@
             resolve()
           })
           .catch(error => {
-            this.error = error
+            if(error.response && error.response.status === 404) {
+              console.clear()
+              this.error = error.response.data.message
+            }
             reject()
           })
         })
       },
       get7DayForecastDetailed() {
         return new Promise((resolve) => {
-          this.$axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.fetchedData.coord.lat}&lon=${this.fetchedData.coord.lon}&exclude=current,minutely,alerts&appid=${this.apiKey}&units=metric`)
-          .then(res => {
-            this.largeData = res.data
-            this.isLargeDataFetched = true
-            resolve()
-          })
+          if (Object.keys(this.fetchedData).length !== 0) {
+            this.$axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.fetchedData.coord.lat}&lon=${this.fetchedData.coord.lon}&exclude=current,minutely,alerts&appid=${this.apiKey}&units=metric`)
+            .then(res => {
+              this.largeData = res.data
+              this.isLargeDataFetched = true
+              resolve()
+            })
+          }
         })
       },
       async performOperations() {
         this.isLargeDataFetched = false
         await this.getCurrentForecast().then(() => {
           this.error !== '' ? this.error = '' : ''
+          this.getTimeOfDay()
+        })
+        .catch((e) => {
+          return
         })
         await this.get7DayForecastDetailed()
         this.showData = true
         this.loading = false
-        this.getTimeOfDay()
       }
     },
   }
@@ -375,17 +388,13 @@
 
 <style scoped>
 
-
-/* Enter and leave animations can use different */
-/* durations and timing functions.              */
 .slide-fade-enter-active {
   transition: all .3s ease;
 }
 .slide-fade-leave-active {
   transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+.slide-fade-enter, .slide-fade-leave-to {
   transform: translateX(10px);
   opacity: 0;
 }
