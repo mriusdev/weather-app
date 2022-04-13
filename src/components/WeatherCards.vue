@@ -350,7 +350,7 @@
           .catch(error => {
             if(error.response && error.response.status === 404) {
               console.clear()
-              this.error = error.response.data.message
+              this.error = error.response.data.data.message
             }
             reject()
           })
