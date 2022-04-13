@@ -271,7 +271,6 @@
     data () {
       return {
         searchLocation: '',
-        apiKey: process.env.VUE_APP_API_KEY,
         fetchedData: {},
         largeData: {},
         isLargeDataFetched: false,
@@ -336,7 +335,7 @@
       },
       getCurrentForecast() {
         return new Promise((resolve, reject) => {
-          this.$axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.searchLocation}&appid=${this.apiKey}&units=metric`)
+          this.$axios.get(`/.netlify/functions/fetch-weather?searchTerm=${this.searchLocation}`)
           .then(res => {
             this.fetchedData = res.data
             this.searchLocation = ''
@@ -360,7 +359,7 @@
       get7DayForecastDetailed() {
         return new Promise((resolve) => {
           if (Object.keys(this.fetchedData).length !== 0) {
-            this.$axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.fetchedData.coord.lat}&lon=${this.fetchedData.coord.lon}&exclude=current,minutely,alerts&appid=${this.apiKey}&units=metric`)
+            this.$axios.get(`/.netlify/functions/fetch-weather-detailed?lat=${this.fetchedData.coord.lat}&lon=${this.fetchedData.coord.lon}`)
             .then(res => {
               this.largeData = res.data
               this.isLargeDataFetched = true
