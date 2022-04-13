@@ -382,7 +382,7 @@
         this.showData = true
         this.loading = false
       }
-    },
+    }
   }
 </script>
 
