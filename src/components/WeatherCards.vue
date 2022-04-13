@@ -25,6 +25,8 @@
             @keydown.enter.prevent="performOperations"
             background-color="deep-purple lighten-2"
             dark
+            color="white"
+            :loading="loading"
             style="width: 100%;"
           ></v-text-field>
           <transition name="slide-fade">
@@ -246,7 +248,9 @@
                 @keydown.enter.prevent="performOperations"
                 background-color="deep-purple lighten-2"
                 dark
+                color="white"
                 v-click-outside="turnOffOverlay"
+                :loading="loading"
                 style="width: 100%;"
               ></v-text-field>
               <transition name="slide-fade">
@@ -370,12 +374,13 @@
       },
       async performOperations() {
         this.isLargeDataFetched = false
+        this.loading = true
         await this.getCurrentForecast().then(() => {
           this.error !== '' ? this.error = '' : ''
           this.getTimeOfDay()
         })
         .catch((e) => {
-          return
+          this.loading = false
         })
         await this.get7DayForecastDetailed()
         this.showData = true
