@@ -50,23 +50,23 @@
                 style="box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;"
               >
                 <div class="d-flex flex-column justify-center align-start">
-                  <h1 v-text="getDayName(fetchedData.dt)" class="font-weight-bold blue-grey--text text--darken-3"></h1>
-                  <span v-text="getDate(fetchedData.dt)" class="blue-grey--text text--darken-3"></span>
+                  <h1 v-text="getDayName(currentForecast.dt)" class="font-weight-bold blue-grey--text text--darken-3"></h1>
+                  <span v-text="getDate(currentForecast.dt)" class="blue-grey--text text--darken-3"></span>
                   <div class="d-flex justify-center align-center mt-2">
                     <v-icon dense class="blue-grey--text text--darken-3">
                       mdi-map-marker
                     </v-icon>
-                    <span class="blue-grey--text text--darken-3">{{fetchedData.name}}, {{fetchedData.sys.country}}</span>
+                    <span class="blue-grey--text text--darken-3">{{currentForecast.name}}, {{currentForecast.sys.country}}</span>
                   </div>
                 </div>
                 <div class="d-flex flex-column justify-center align-start">
                   <v-img
                     max-height="100"
                     max-width="100"
-                    :src="`https://openweathermap.org/img/wn/${fetchedData.weather[0].icon}@2x.png`"
+                    :src="`https://openweathermap.org/img/wn/${currentForecast.weather[0].icon}@2x.png`"
                   ></v-img>
-                  <span class="text-h2 font-weight-bold blue-grey--text text--darken-3">{{fetchedData.main.temp}}&#8451;</span>
-                  <h3 class="font-weight-bold text-capitalize blue-grey--text text--darken-3">{{fetchedData.weather[0].description}}</h3>
+                  <span class="text-h2 font-weight-bold blue-grey--text text--darken-3">{{currentForecast.main.temp}}&#8451;</span>
+                  <h3 class="font-weight-bold text-capitalize blue-grey--text text--darken-3">{{currentForecast.weather[0].description}}</h3>
                 </div>
               </v-sheet>
             </div>
@@ -90,7 +90,7 @@
                     </v-icon>
                     <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
                       <span class="font-weight-bold blue-grey--text text--darken-3">Humidity</span>
-                      <span class="blue-grey--text text--darken-3">{{fetchedData.main.humidity}} %</span>
+                      <span class="blue-grey--text text--darken-3">{{currentForecast.main.humidity}} %</span>
                     </v-sheet>
                   </div>
                   
@@ -104,7 +104,7 @@
                     </v-icon>
                     <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
                       <span class="font-weight-bold blue-grey--text text--darken-3">Feels Like</span>
-                      <span class="blue-grey--text text--darken-3">{{fetchedData.main.feels_like}} &#8451;</span>
+                      <span class="blue-grey--text text--darken-3">{{currentForecast.main.feels_like}} &#8451;</span>
                     </v-sheet>
                   </div>
 
@@ -118,7 +118,7 @@
                     </v-icon>
                     <v-sheet style="width: 100%" color="transparent" class="d-flex justify-space-between align-center px-2 py-1">
                       <span class="font-weight-bold blue-grey--text text--darken-3">Wind</span>
-                      <span class="blue-grey--text text--darken-3">{{fetchedData.wind.speed}} m/s</span>
+                      <span class="blue-grey--text text--darken-3">{{currentForecast.wind.speed}} m/s</span>
                     </v-sheet>
                   </div>
                 </div>
@@ -131,7 +131,7 @@
                     show-arrows
                   >
                     <v-slide-item
-                      v-for="item in largeData.hourly"
+                      v-for="item in detailedForecast.hourly"
                       :key="item.id"
                     >
                       <div class="d-flex flex-column justify-space-between align-center weather-100p-width px-4">
@@ -181,7 +181,7 @@
                     </v-icon>
                     <span class="ml-1 deep-purple--text text--lighten-2" style="font-size: 15px;">7-DAY FORECAST</span>
                   </div>
-                  <div v-for="day in largeData.daily" :key="day.id" class="weather-100p-width weather-bottom-outline">
+                  <div v-for="day in detailedForecast.daily" :key="day.id" class="weather-100p-width weather-bottom-outline">
                     <div style="height: 60px;" class="d-flex justify-space-between align-center">
                       <span style="width: 35px;" class="font-weight-bold blue-grey--text text--darken-3" v-text="getTodayOrDayName(day.dt)"></span>
 
@@ -275,9 +275,8 @@
     data () {
       return {
         searchLocation: '',
-        fetchedData: {},
-        largeData: {},
-        isLargeDataFetched: false,
+        currentForecast: {},
+        detailedForecast: {},
         error: '',
         showData: false,
         overlay: false,
@@ -292,14 +291,14 @@
         return fetchedDate
       },
       getDayName(time) {
-        if (this.largeData) {
+        if (this.detailedForecast) {
           const fetchedDate = new Date(time * 1000)
           const dayName = fetchedDate.toLocaleString('en-us', { weekday: 'long' })
           return dayName
         }
       },
       getTodayOrDayName(time) {
-        if (this.largeData) {
+        if (this.detailedForecast) {
           const today = new Date()
           const fetchedDate = new Date(time * 1000)
           var isToday = (today.toDateString() === fetchedDate.toDateString())
@@ -312,7 +311,7 @@
         }
       },
       getTimeOfDay() {
-        const iconName = this.fetchedData.weather[0].icon
+        const iconName = this.currentForecast.weather[0].icon
         if (iconName.includes('d')) {
           this.timeOfDay = 'day'
         } else {
@@ -326,7 +325,7 @@
         }
       },
       getTime(time) {
-        if (this.largeData) {
+        if (this.detailedForecast) {
           const date = new Date(time * 1000)
           const hours = date.getHours()
           return hours
@@ -341,7 +340,7 @@
         return new Promise((resolve, reject) => {
           this.$axios.get(`/.netlify/functions/fetch-weather?searchTerm=${this.searchLocation}`)
           .then(res => {
-            this.fetchedData = res.data
+            this.currentForecast = res.data
             this.searchLocation = ''
             // If search was done within modal
             // then turn off modal after search
@@ -362,18 +361,16 @@
       },
       get7DayForecastDetailed() {
         return new Promise((resolve) => {
-          if (Object.keys(this.fetchedData).length !== 0) {
-            this.$axios.get(`/.netlify/functions/fetch-weather-detailed?lat=${this.fetchedData.coord.lat}&lon=${this.fetchedData.coord.lon}`)
+          if (Object.keys(this.currentForecast).length !== 0) {
+            this.$axios.get(`/.netlify/functions/fetch-weather-detailed?lat=${this.currentForecast.coord.lat}&lon=${this.currentForecast.coord.lon}`)
             .then(res => {
-              this.largeData = res.data
-              this.isLargeDataFetched = true
+              this.detailedForecast = res.data
               resolve()
             })
           }
         })
       },
       async performOperations() {
-        this.isLargeDataFetched = false
         this.loading = true
         await this.getCurrentForecast().then(() => {
           this.error !== '' ? this.error = '' : ''
