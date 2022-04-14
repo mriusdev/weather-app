@@ -5,7 +5,7 @@
         <v-sheet
           color="transparent"
           height="auto"
-          width="450"
+          :style="$vuetify.breakpoint.smAndDown ? 'width: 350px;' : 'width: 450px;'"
           class="d-flex flex-column justify-center align-center mt-5"
           rounded
           v-if="!showData"
@@ -43,7 +43,7 @@
               <v-sheet
                 color="white"
                 height="400"
-                width="400"
+                :style="$vuetify.breakpoint.smAndDown ? 'width: 350px;' : 'width: 400px;'"
                 class="d-flex flex-column justify-space-between align-start px-7 py-5 rounded-lg"
                 rounded
                 elevation="5"
@@ -74,7 +74,7 @@
               <v-sheet
                 color="white"
                 height="400"
-                width="400"
+                :style="$vuetify.breakpoint.smAndDown ? 'width: 350px;' : 'width: 400px;'"
                 rounded
                 elevation="5"
                 class="order-lg-3 d-flex flex-column justify-space-between align-center py-5 px-7 rounded-lg"
@@ -124,7 +124,7 @@
                 </div>
 
                 <v-sheet
-                  max-width="370"
+                  max-width="100%"
                 >
                   <v-slide-group
                     multiple
@@ -166,7 +166,7 @@
               <v-sheet
                 color="white"
                 height="auto"
-                width="400"
+                :style="$vuetify.breakpoint.smAndDown ? 'width: 350px;' : 'width: 400px;'"
                 class="d-flex flex-column px-5 py-5 rounded-lg px-7"
                 elevation="5"
 
@@ -232,7 +232,7 @@
             color="transparent"
             class="d-flex justify-center align-start"
             rounded
-            :style="$vuetify.breakpoint.smAndDown ? 'width: 400px;' : 'width: 450px;'"
+            :style="$vuetify.breakpoint.smAndDown ? 'width: 350px;' : 'width: 450px;'"
             style="height: 70vh;"
           >
             <div style="width: 100%;" class="d-flex flex-column justify-center align-start">
