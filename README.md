@@ -12,7 +12,8 @@ A website I've built using [OpenWeather API](https://openweathermap.org/api), [V
 ## 🪞 The Look
 A short video of how the site functions
 
-![Weather site video](/git-assets/weather-site-video.mov)
+https://user-images.githubusercontent.com/93098512/163397799-d9140126-2c92-4b83-aacf-4aa8711fc9c3.mp4
+
 <br />
 
 ## 📚 What I've Learned
@@ -32,7 +33,6 @@ Getting the right data to show up from the API calls was a fantastic learning ex
 ## 💭 Potential Future Features
 - A dark mode switch that changes the theme from light to dark mode
 - An automatic theme switch based on the searched location of the weather forecast
-<br />
 
 ## ⚙️ Project setup
 
