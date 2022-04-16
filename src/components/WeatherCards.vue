@@ -301,7 +301,7 @@
         if (this.detailedForecast) {
           const today = new Date()
           const fetchedDate = new Date(time * 1000)
-          var isToday = (today.toDateString() === fetchedDate.toDateString())
+          const isToday = (today.toDateString() === fetchedDate.toDateString())
           const dayName = fetchedDate.toLocaleString('en-us', { weekday: 'short' })
           if (isToday) {
             return 'Today'
